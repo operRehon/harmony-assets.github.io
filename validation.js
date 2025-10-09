@@ -111,33 +111,79 @@ function updateBookBindingOptions() {
     const coverNotRequired = document.getElementById('bookCoverNotRequired').checked;
     const coverPaperType = document.getElementById('bookCoverPaperType').value;
     const bindingTypeSelect = document.getElementById('bookBindingType');
-    if (!bindingTypeSelect)
-        return;
+    
+    if (!bindingTypeSelect) return;
+
     // Сохраняем текущее значение
     const currentValue = bindingTypeSelect.value;
-    // Очищаем опции
-    bindingTypeSelect.innerHTML = '';
+    
+    // Всегда показываем все опции
+    bindingTypeSelect.innerHTML = `
+        <option value="hard">Твердый переплет</option>
+        <option value="soft">Мягкий переплет</option>
+        <option value="staple">Скрепка</option>
+    `;
+
+    // Устанавливаем доступность опций
+    const hardOption = bindingTypeSelect.querySelector('option[value="hard"]');
+    const softOption = bindingTypeSelect.querySelector('option[value="soft"]');
+    const stapleOption = bindingTypeSelect.querySelector('option[value="staple"]');
+
+    // Условия доступности:
     if (coverNotRequired) {
-        // Если обложка не требуется - все типы переплета доступны
-        bindingTypeSelect.innerHTML = `
-            <option value="hard">Твердый переплет</option>
-            <option value="soft">Мягкий переплет</option>
-            <option value="staple" selected>Скрепка</option>
-        `;
-    } else if (coverPaperType === '2') { // 115 г/м²
+        // Если обложка не требуется - все типы доступны
+        hardOption.disabled = false;
+        softOption.disabled = false;
+        stapleOption.disabled = false;
+    } else if (coverPaperType === '2') {
         // Для бумаги 115 г/м² - только твердый переплет и скрепка
-        bindingTypeSelect.innerHTML = `
-            <option value="hard">Твердый переплет</option>
-            <option value="staple" selected>Скрепка</option>
-        `;
+        hardOption.disabled = false;
+        softOption.disabled = true;
+        softOption.title = "Мягкий переплет недоступен для бумаги 115 г/м². Выберите другой тип бумаги обложки.";
+        stapleOption.disabled = false;
     } else {
         // Для другой бумаги - только мягкий переплет и скрепка
-        bindingTypeSelect.innerHTML = `
-            <option value="soft">Мягкий переплет</option>
-            <option value="staple" selected>Скрепка</option>
-        `;
+        hardOption.disabled = true;
+        hardOption.title = "Твердый переплет недоступен для выбранного типа бумаги обложки. Выберите бумагу 115 г/м².";
+        softOption.disabled = false;
+        stapleOption.disabled = false;
     }
+
     // Восстанавливаем предыдущее значение, если оно доступно
-    if (Array.from(bindingTypeSelect.options).some(opt => opt.value === currentValue))
+    if (Array.from(bindingTypeSelect.options).some(opt => opt.value === currentValue && !opt.disabled)) {
         bindingTypeSelect.value = currentValue;
+    } else {
+        // Если предыдущее значение недоступно, выбираем скрепку
+        bindingTypeSelect.value = 'staple';
+        // Показываем уведомление, если пытались выбрать недоступный тип
+        if (currentValue === 'hard' && hardOption.disabled) {
+            showNotification("Твердый переплет недоступен для выбранного типа бумаги обложки. Выберите бумагу 115 г/м².");
+        } else if (currentValue === 'soft' && softOption.disabled) {
+            showNotification("Мягкий переплет недоступен для бумаги 115 г/м². Выберите другой тип бумаги обложки.");
+        }
+    }
+
+    // Обновляем стили для визуального отображения недоступных опций
+    updateBindingOptionsStyles();
+}
+
+function updateBindingOptionsStyles() {
+    const bindingTypeSelect = document.getElementById('bookBindingType');
+    if (!bindingTypeSelect) return;
+
+    // Добавляем стили для disabled опций
+    const style = document.getElementById('bindingOptionsStyles') || document.createElement('style');
+    style.id = 'bindingOptionsStyles';
+    style.textContent = `
+        #bookBindingType option:disabled {
+            color: #999;
+            background-color: #f5f5f5;
+        }
+        #bookBindingType option {
+            color: #000;
+        }
+    `;
+    if (!document.getElementById('bindingOptionsStyles')) {
+        document.head.appendChild(style);
+    }
 }
