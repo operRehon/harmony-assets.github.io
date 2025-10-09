@@ -2,6 +2,7 @@
 // =============================================
 // ОСНОВНЫЕ ФУНКЦИИ РАСЧЕТА И ОБНОВЛЕНИЯ
 // =============================================
+
 function calculateCost() {
     try {
         resetCostDisplay();
@@ -13,9 +14,18 @@ function calculateCost() {
             let width, height;
             if (product.type === 'booklet') {
                 const bookletSize = product.bookletSize || 'A4';
-                if (bookletSize === 'A3') { width = 297; height = 420; } 
-                else { width = 210; height = 297; }
-            } else if (product.type === 'visiting') { width = 50; height = 90; } 
+                if (bookletSize === 'A3') {
+                    width = 297;
+                    height = 420;
+                } 
+                else {
+                    width = 210;
+                    height = 297;
+                }
+            } else if (product.type === 'visiting') {
+                width = 50;
+                height = 90;
+            } 
             else {
                 width = product.width || (FORMAT_SIZES[product.razmer] ? FORMAT_SIZES[product.razmer].width : 148);
                 height = product.height || (FORMAT_SIZES[product.razmer] ? FORMAT_SIZES[product.razmer].height : 210);
@@ -27,6 +37,7 @@ function calculateCost() {
         document.getElementById('currentCostValue').textContent = 'Ошибка расчета';
     }
 }
+
 function updateTotalCost() {
     let totalCost = products.reduce((sum, product) => {
         const costResult = calculateProductCost(product);
@@ -35,6 +46,7 @@ function updateTotalCost() {
     document.getElementById('totalOrderCost').textContent = `${totalCost.toFixed(2)} руб.`;
     return totalCost;
 }
+
 function resetForm() {
     document.getElementById('productId').value = '';
     const productType = document.getElementById('productType').value;
@@ -87,7 +99,8 @@ function resetForm() {
     const postprintOptions = ['embossing', 'dieCutting', 'lamination', 'scoring', 'folding', 'cornerRounding', 'numbering', 'perforation', 'gluing', 'binding'];
     postprintOptions.forEach(option => {
         const checkbox = document.getElementById(option + 'Required');
-        if (checkbox) checkbox.checked = false;
+        if (checkbox)
+            checkbox.checked = false;
     });
     currentProductId = null;
     updateVisibility();
