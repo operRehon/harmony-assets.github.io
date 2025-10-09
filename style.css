@@ -89,6 +89,30 @@
             border-bottom: 1px solid #eee;
         }
         .detail-item:last-child { border-bottom: none; }
+        /* Стили для недоступных опций переплета книг */
+        #bookBindingType option:disabled {
+            color: #999;
+            background-color: #f5f5f5;
+        }
+
+        #bookBindingType option {
+            color: #000;
+        }
+
+        /* Подсказка для недоступных опций */
+        #bookBindingType option[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-top: -30px;
+            margin-left: 10px;
+            z-index: 1000;
+            white-space: nowrap;
+        }
     /* ===== КАРТОЧКИ И КОНТЕЙНЕРЫ ===== */
         .form-container, .mockup-container, .result-container, .products-container {
             background: var(--card-bg);
