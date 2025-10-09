@@ -2,6 +2,7 @@
 // =============================================
 // ФУНКЦИИ РАБОТЫ С ФОРМОЙ И ДАННЫМИ
 // =============================================
+
 function handleSizeChange() {
     const width = parseInt(document.getElementById('width').value) || 0;
     const height = parseInt(document.getElementById('height').value) || 0;
@@ -11,9 +12,12 @@ function handleSizeChange() {
         formatSelect.value = detectedFormat;
         document.getElementById('width').value = FORMAT_SIZES[detectedFormat].width;
         document.getElementById('height').value = FORMAT_SIZES[detectedFormat].height;
-    } else if (width > 0 && height > 0) formatSelect.value = "";
+    }
+    else if (width > 0 && height > 0)
+        formatSelect.value = "";
     calculateCost();
 }
+
 function handleFormatChange() {
     const formatSelect = document.getElementById('formatType');
     const formatValue = formatSelect.value;
@@ -32,6 +36,7 @@ function handleFormatChange() {
     checkGluingAvailability();
     calculateCost();
 }
+
 function getFormData() {
     const productType = document.getElementById('productType').value;
     const isVisiting = productType === 'visiting';
@@ -47,8 +52,10 @@ function getFormData() {
               parseInt(document.getElementById('colorType').value) || 1,
         item: isVisiting ? (function() {
             let visitingQuantity = parseInt(document.getElementById('visitingQuantity').value) || 96;
-            if (visitingQuantity % 24 !== 0) visitingQuantity = Math.ceil(visitingQuantity / 24) * 24;
-            if (visitingQuantity < 96) visitingQuantity = 96;
+            if (visitingQuantity % 24 !== 0)
+                visitingQuantity = Math.ceil(visitingQuantity / 24) * 24;
+            if (visitingQuantity < 96)
+                visitingQuantity = 96;
             return visitingQuantity;
         })() : isBooklet ? parseInt(document.getElementById('bookletQuantity').value) || 100 :
               isBook ? 0 : // Для книг item не используется
@@ -77,15 +84,33 @@ function getFormData() {
     if (isBooklet) {
         const bookletSize = document.querySelector('input[name="bookletSize"]:checked');
         data.bookletSize = bookletSize ? bookletSize.value : 'A4';
-        if (data.bookletSize === 'A3') { data.width = 297; data.height = 420; data.razmer = 1; } 
-        else { data.width = 210; data.height = 297; data.razmer = 2; }
+        if (data.bookletSize === 'A3') {
+            data.width = 297;
+            data.height = 420;
+            data.razmer = 1;
+        } 
+        else {
+            data.width = 210;
+            data.height = 297;
+            data.razmer = 2;
+        }
         data.bookletEmbossingRequired = document.getElementById('bookletEmbossingRequired').checked;
         data.bookletEmbossingHits = parseInt(document.getElementById('bookletEmbossingHits').value) || 0;
         data.bookletLaminationRequired = document.getElementById('bookletLaminationRequired').checked;
         data.bookletLaminationType = parseInt(document.getElementById('bookletLaminationType').value) || 1;
     }
     if (!data.postprintRequired && productType !== 'booklet' && productType !== 'book') {
-        const postprintOptions = ['embossing', 'dieCutting', 'lamination', 'scoring', 'folding', 'cornerRounding', 'numbering', 'perforation', 'gluing', 'binding'];
+        const postprintOptions = [
+            'embossing',
+            'dieCutting',
+            'lamination',
+            'scoring',
+            'folding',
+            'cornerRounding',
+            'numbering',
+            'perforation',
+            'gluing',
+            'binding'];
         postprintOptions.forEach(option => { data[option + 'Required'] = false; });
     } else if (data.postprintRequired && productType !== 'book') {
         data.embossingRequired = document.getElementById('embossingRequired').checked;
@@ -121,6 +146,7 @@ function getFormData() {
     }
     return data;
 }
+
 function fillForm(product) {
     if (!product) return;
     document.getElementById('productId').value = product.id;
@@ -193,18 +219,35 @@ function fillForm(product) {
     currentProductId = product.id;
     updateVisibility();
 }
+
 function updateVisibility() {
     const productType = document.getElementById('productType').value;
     const postprintRequired = document.getElementById('postprintRequired').checked;
     const postprintOptions = document.getElementById('postprintOptions');
     if (postprintOptions) postprintOptions.style.display = (postprintRequired && productType !== 'book') ? 'block' : 'none';
-    const options = ['embossing', 'dieCutting', 'lamination', 'scoring', 'folding', 'cornerRounding', 'numbering', 'perforation', 'gluing', 'binding', 'visitingCornerRounding', 'bookletEmbossing', 'bookletLamination', 'visitingLamination'];
+    const options = [
+        'embossing',
+        'dieCutting',
+        'lamination',
+        'scoring',
+        'folding',
+        'cornerRounding',
+        'numbering',
+        'perforation',
+        'gluing',
+        'binding',
+        'visitingCornerRounding',
+        'bookletEmbossing',
+        'bookletLamination',
+        'visitingLamination'];
     options.forEach(option => {
         const checkbox = document.getElementById(option + 'Required');
         const optionsDiv = document.getElementById(option + 'Options');
-        if (checkbox && optionsDiv) optionsDiv.style.display = checkbox.checked ? 'block' : 'none';
+        if (checkbox && optionsDiv)
+            optionsDiv.style.display = checkbox.checked ? 'block' : 'none';
     });
-    if (productType === 'book') updateBookBindingOptions();
+    if (productType === 'book')
+        updateBookBindingOptions();
     const visitingPaperType = document.getElementById('visitingPaperType');
     const visitingLaminationRequired = document.getElementById('visitingLaminationRequired');
     const visitingLaminationOptions = document.getElementById('visitingLaminationOptions');
@@ -216,17 +259,21 @@ function updateVisibility() {
         }
         visitingLaminationRequired.disabled = !isLaminationAvailable;
         visitingLaminationRequired.parentElement.style.opacity = isLaminationAvailable ? '1' : '0.5';
-        if (isLaminationAvailable && visitingLaminationRequired.checked) visitingLaminationOptions.style.display = 'block';
+        if (isLaminationAvailable && visitingLaminationRequired.checked)
+            visitingLaminationOptions.style.display = 'block';
     }
     const bindingType = document.getElementById('bindingType') ? document.getElementById('bindingType').value : 'staple';
     const spiralOptions = document.getElementById('spiralOptions');
     const stapleOptions = document.getElementById('stapleOptions');
-    if (spiralOptions) spiralOptions.style.display = bindingType === 'spiral' ? 'block' : 'none';
-    if (stapleOptions) stapleOptions.style.display = bindingType === 'staple' ? 'block' : 'none';
+    if (spiralOptions)
+        spiralOptions.style.display = bindingType === 'spiral' ? 'block' : 'none';
+    if (stapleOptions)
+        stapleOptions.style.display = bindingType === 'staple' ? 'block' : 'none';
     checkBindingAvailability();
     checkGluingAvailability();
     setTimeout(calculateCost, 10);
 }
+
 function updateProductName(productType) {
     const nameField = document.getElementById('productName');
     if (nameField && (!nameField.value || nameField.value.includes('Листовая печать') || 
@@ -234,43 +281,57 @@ function updateProductName(productType) {
         nameField.value = `${getProductTypeName(productType)} ${productCounter[productType] || 1}`;
     }
 }
+
 function toggleFieldsVisibility(productType) {
     document.body.classList.remove('visiting-card-selected', 'booklet-selected', 'book-selected');
     resetCostDisplay();
     if (productType === 'visiting') {
         document.body.classList.add('visiting-card-selected');
         const quantityGroup = document.querySelector('.form-group:has(#quantity)');
-        if (quantityGroup) quantityGroup.style.display = 'none';
+        if (quantityGroup)
+            quantityGroup.style.display = 'none';
         const bookletQuantityGroup = document.querySelector('.form-group:has(#bookletQuantity)');
-        if (bookletQuantityGroup) bookletQuantityGroup.style.display = 'none';
+        if (bookletQuantityGroup)
+            bookletQuantityGroup.style.display = 'none';
         const visitingQuantityGroup = document.querySelector('.form-group:has(#visitingQuantity)');
-        if (visitingQuantityGroup) visitingQuantityGroup.style.display = 'block';
+        if (visitingQuantityGroup)
+            visitingQuantityGroup.style.display = 'block';
     } else if (productType === 'booklet') {
         document.body.classList.add('booklet-selected');
         const quantityGroup = document.querySelector('.form-group:has(#quantity)');
-        if (quantityGroup) quantityGroup.style.display = 'none';
+        if (quantityGroup)
+            quantityGroup.style.display = 'none';
         const visitingQuantityGroup = document.querySelector('.form-group:has(#visitingQuantity)');
-        if (visitingQuantityGroup) visitingQuantityGroup.style.display = 'none';
+        if (visitingQuantityGroup)
+            visitingQuantityGroup.style.display = 'none';
         const bookletQuantityGroup = document.querySelector('.form-group:has(#bookletQuantity)');
-        if (bookletQuantityGroup) bookletQuantityGroup.style.display = 'block';
+        if (bookletQuantityGroup)
+            bookletQuantityGroup.style.display = 'block';
     } else if (productType === 'book') {
         document.body.classList.add('book-selected');
         const quantityGroup = document.querySelector('.form-group:has(#quantity)');
-        if (quantityGroup) quantityGroup.style.display = 'none';
+        if (quantityGroup)
+            quantityGroup.style.display = 'none';
         const visitingQuantityGroup = document.querySelector('.form-group:has(#visitingQuantity)');
-        if (visitingQuantityGroup) visitingQuantityGroup.style.display = 'none';
+        if (visitingQuantityGroup)
+            visitingQuantityGroup.style.display = 'none';
         const bookletQuantityGroup = document.querySelector('.form-group:has(#bookletQuantity)');
-        if (bookletQuantityGroup) bookletQuantityGroup.style.display = 'none';
+        if (bookletQuantityGroup)
+            bookletQuantityGroup.style.display = 'none';
     } else {
         const quantityGroup = document.querySelector('.form-group:has(#quantity)');
-        if (quantityGroup) quantityGroup.style.display = 'block';
+        if (quantityGroup)
+            quantityGroup.style.display = 'block';
         const visitingQuantityGroup = document.querySelector('.form-group:has(#visitingQuantity)');
-        if (visitingQuantityGroup) visitingQuantityGroup.style.display = 'none';
+        if (visitingQuantityGroup)
+            visitingQuantityGroup.style.display = 'none';
         const bookletQuantityGroup = document.querySelector('.form-group:has(#bookletQuantity)');
-        if (bookletQuantityGroup) bookletQuantityGroup.style.display = 'none';
+        if (bookletQuantityGroup)
+            bookletQuantityGroup.style.display = 'none';
     }
     updateContainerVisibility(productType);
 }
+
 function updateContainerVisibility(productType) {
     const mockupContainer = document.querySelector('.mockup-container');
     const resultContainer = document.querySelector('.result-container');
