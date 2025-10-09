@@ -2,15 +2,21 @@
 // =============================================
 // ФУНКЦИИ РАБОТЫ С ИЗДЕЛИЯМИ
 // =============================================
+
 function addProduct() {
     const product = getFormData();
-    if (isDuplicateProduct(product)) { showDuplicateModal(product); return; }
+    if (isDuplicateProduct(product)) {
+        showDuplicateModal(product);
+        return;
+    }
     saveProduct(product);
 }
+
 function saveProduct(product) {
     if (currentProductId) {
         const index = products.findIndex(p => p.id === currentProductId);
-        if (index !== -1) products[index] = product;
+        if (index !== -1)
+            products[index] = product;
     } else {
         products.push(product);
         const productType = product.type;
@@ -23,6 +29,7 @@ function saveProduct(product) {
     const totalCost = updateTotalCost();
     showNotification(`${totalCost.toFixed(2)} руб.`, true);
 }
+
 function editProduct(index) {
     if (index >= 0 && index < products.length) {
         const product = products[index];
@@ -30,6 +37,7 @@ function editProduct(index) {
         document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
     }
 }
+
 function deleteProduct(index) {
     if (index >= 0 && index < products.length) {
         products.splice(index, 1);
@@ -39,9 +47,11 @@ function deleteProduct(index) {
         showNotification(`${totalCost.toFixed(2)} руб.`, true);
     }
 }
+
 function renderProductsList() {
     const productsList = document.getElementById('productsList');
-    if (!productsList) return;
+    if (!productsList)
+        return;
     if (products.length === 0) {
         productsList.innerHTML = '<div class="empty-list-message">Добавьте первое изделие</div>';
         return;
@@ -122,6 +132,7 @@ function renderProductsList() {
         productsList.appendChild(productElement);
     });
 }
+
 function getProductDetails(product) {
     let details = '';
     switch (product.type) {
@@ -135,6 +146,7 @@ function getProductDetails(product) {
     }
     return details;
 }
+
 function isDuplicateProduct(newProduct) {
     return products.some(product => 
         product.type === newProduct.type &&
